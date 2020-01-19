@@ -18,31 +18,32 @@ typedef enum En_SevenSegId_t{
 }En_SevenSegId_t;
 
 /**
- * Description: 
- * @param 
+ * Description: initialize the seg_x pins state to output ( 4 bits for data ,the enable bit ,the decimal bit)
+ * @param a_segment_id : The seg to be initialized and it takes
+ * 				  one of the enum (En_sevensegd_t) parameters
  */
 void sevenSegInit(En_SevenSegId_t a_segment_id);
 
 /**
- * Description: 
- set direction of output bits 
- - 4 bits for data
- - the enable bit 
- - the decimal bit 
+ * Description: write high on the enable pin of the required  seg
   
- * @param 
+ * @param :the seg to be enabled and it takes
+ * 				  one of the enum (En_sevensegd_t) parameters
  */
 void sevenSegEnable(En_SevenSegId_t en_segment_id);
 
 /**
- * Description: 
- * @param 
+ * Description: disable the seg
+ * @param:the seg to be enabled and it takes
+ * 				  one of the enum (En_sevensegd_t) parameters 
  */
 void sevenSegDisable(En_SevenSegId_t en_segment_id);
 
 /**
- * Description: 
- * @param 
+ * Description:  write the required number on the 4 pins connected to seg 
+ * @param en_segment_id  : the seg to display on and it takes
+ * 				  one of the enum (En_sevensegd_t) parameters
+ * @param u8_number : the value of the digit to display on seg
  */
 void sevenSegWrite(En_SevenSegId_t en_segment_id, uint8_t u8_number);
 
