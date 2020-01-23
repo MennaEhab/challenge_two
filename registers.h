@@ -12,6 +12,7 @@
 /*
  * General Registers
  */
+#define  SREG	(*(reg_type8_t)(0x5F))
 #define MCUCR	(*(reg_type8_t)(0x55))
 #define MCUCSR	(*(reg_type8_t)(0x54))
 #define GICR	(*(reg_type8_t)(0x5B))
@@ -61,7 +62,7 @@
 
 #define TCCR1A		(*(reg_type8_t)(0x4F))
 #define TCCR1B		(*(reg_type8_t)(0x4E))
-#define TCCR1		(*(reg_type8_t)(0x4E))
+#define TCCR1		(*(reg_type16_t)(0x4E))
 #define TCNT1H		(*(reg_type8_t)(0x4D))
 #define TCNT1L		(*(reg_type8_t)(0x4C))
 #define TCNT1		(*(reg_type16_t)(0x4C))
@@ -81,8 +82,8 @@
  */
 #define TCCR2		(*(reg_type8_t)(0x45))
 #define TCNT2		(*(reg_type8_t)(0x44))
-#define OCR2		(*(reg_type8_t)(0x43)
-
+#define OCR2		(*(reg_type8_t)(0x43))
+#define ASSR		(*(reg_type8_t)(0x42))
 
 
 

@@ -10,6 +10,7 @@
 #include "softwareDelay.h"
 #include "pushButton.h"
 #include "sevenSeg.h"
+#include "timers.h"
 
 typedef enum status{
 	GO,
@@ -21,6 +22,9 @@ typedef enum status{
  * Description: Change the LED_0 state to be on for 1 sec as the BTN_0 is pressed
  *
  */
+
+
+
 
 void req2(void)
 {
@@ -40,11 +44,10 @@ void req2(void)
 			count = 5;
 		}
 		
-		
 		while (count > 0)
 		{
 			Led_On(LED_0);
-			softwareDelayMs(10);
+			timer0DelayMs(1000);
 			
 			if(pushButtonGetStatus(BTN_0)== Pressed)
 			count +=5;
@@ -60,15 +63,13 @@ void req2(void)
 }
 
 
-
-
 /**
  * Description: function to count from 00 to 99 and display the count on SEG_0 and SEG_1 
 	the digit is on display for 1 sec ;
  *
  */
 
-void req1(void){
+/*void req1(void){
 	
 	sevenSegInit(SEG_0);
 	sevenSegInit(SEG_1);
@@ -93,7 +94,7 @@ void req1(void){
 	}
 	
 }
-
+*/
 
 /**
  * Description: Change the LED_x state (where x 0, 1, 2 ) to be on as the state change
@@ -102,31 +103,42 @@ void req1(void){
 
 
 void req3(void){
-Led_Init(LED_0);
-Led_Init(LED_1);
-Led_Init(LED_2);
+	
+Led_Init(LED_0) ;
+Led_Init(LED_1) ;
+Led_Init(LED_2) ;
+
+timer0Init(T0_NORMAL_MODE,T0_OC0_DIS,T0_PRESCALER_8, 0, 0,0) ;
 status myState = GETREADY ;
+pushButtonInit(BTN_0);
 
 while(1){	
+	
+	while (pushButtonGetStatus(BTN_0)== Pressed)
+	{
+		myState = GETREADY ;
+	}
+	
+
 	switch (myState){
 		
 		case GETREADY :
 		Led_On(LED_0) ;
-		softwareDelayMs(370);
+		timer0DelayMs(1000);
 		Led_Off(LED_0);
 		myState = GO ;
 		break; 
 		
 		case GO :
 		Led_On(LED_2);
-		softwareDelayMs(370);
+		timer0DelayMs(1000);
 		Led_Off(LED_2) ;
 		myState = STOP ;
 		break;
 		
 		case STOP : 
 		Led_On(LED_1);
-		softwareDelayMs(370);
+		timer0DelayMs(1000);
 		Led_Off(LED_1) ;
 		myState = GETREADY ;
 		break;
@@ -142,14 +154,18 @@ while(1){
 int main(void)
 {
     
-	/* call each function of req1 , req2 and req3 to test each one of the applications
-	 req1 -> for the 7seg application 
-	 req2 -> the push buttons and the led 
+	/* call each function of  req2 and req3 to test each one of the applications
+
+	 req2 -> the push button and the led 
 	 req3-> the state machine 
+	 
 	*/
-			//req1();
 			//req2();
 			//req3();
-		
+			
+			
+			
+
+					
 }
 
