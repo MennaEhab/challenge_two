@@ -17,8 +17,9 @@
 uint16_t  global_prescale ;
 uint16_t global_prescale1 ;
 uint16_t global_prescale2 ;
-uint32_t global_input_0 ;
+volatile int32_t global_input_0 ;
 uint16_t prescalerValue =  1;
+uint8_t x = 1 ;
 
 void timer0Init(En_timer0Mode_t en_mode,En_timer0OC_t en_OC0,En_timer0perscaler_t en_prescal,
 				 uint8_t u8_initialValue, uint8_t u8_outputCompare, En_timer0Interrupt_t en_interruptMask)
@@ -27,7 +28,7 @@ void timer0Init(En_timer0Mode_t en_mode,En_timer0OC_t en_OC0,En_timer0perscaler_
 					 TCCR0 =  0 ;
 					 TCCR0 = en_mode | en_OC0 ; 
 					 //TCNT0 = u8_initialValue ;
-					timer0Set(u8_initialValue) ;
+					 timer0Set(u8_initialValue) ;
 					 OCR0 = u8_outputCompare ;
 					 TIMSK |= en_interruptMask ;
 					 
@@ -43,12 +44,9 @@ void timer0Init(En_timer0Mode_t en_mode,En_timer0OC_t en_OC0,En_timer0perscaler_
 						 break;
 						 case t0_prescaler_1024 : prescalervalue = 1024 ;
 						 break;
-						 
-						 
+						 	 
 					 }
-					 timetotalticksms = ((double)(prescalervalue/(f_cpu))*256*1000.0);
-					 
-					 
+					 timetotalticksms = ((double)(prescalervalue/(f_cpu))*256*1000.0);	 
 					 timetotalticksus = ((double)(prescalervalue/(f_cpu))*256*1000.0*1000.0);
 					 */
 				 }
@@ -58,28 +56,23 @@ void timer0Set(uint8_t u8_value)
 		{
 			TCNT0 = u8_value ;
 		}		
-		
-				
+						
 uint8_t timer0Read(void){
 	
 		return TCNT0 ;
 	
 }
 		
-
 void timer0Start(void)
 		{
 			TCCR0 |= global_prescale ; 
 		}
-
-
 
 void timer0Stop(void)
 		{
 			TCCR0 &= T0_NO_CLOCK ;
 		}
 		
-
 void timer0DelayMs(uint16_t u16_delay_in_ms){
 	
 	timer0Init(T0_COMP_MODE,T0_OC0_CLEAR,T0_PRESCALER_64, 0 , 250 ,T0_POLLING) ;
@@ -101,6 +94,29 @@ void timer0DelayMs(uint16_t u16_delay_in_ms){
 	timer0Stop();
 
 }
+
+void timer0DelayMs2(uint16_t u16_delay_in_ms){
+	
+	global_input_0 = u16_delay_in_ms ;
+
+	timer0Init(T0_COMP_MODE,T0_OC0_SET,T0_PRESCALER_64, 0 , 250 ,T0_INTERRUPT_CMP) ;
+	
+	sei();
+	TCNT0 =10;
+	timer0Start();
+	
+	while(1)
+	{
+		if (global_input_0<=0)
+		{
+			timer0Stop();
+			break;
+		}
+		
+	}
+	
+}
+
 
 	
 		
@@ -139,6 +155,10 @@ void timer0DelayUs(uint32_t u32_delay_in_us)
 ISR(TIMER0_COMP_vect){
 	
 	global_input_0 -- ;
+	
+
+	
+	
 }
 
 void timer1Init(En_timer1Mode_t en_mode,En_timer1OC_t en_OC,En_timer1perscaler_t en_prescal, 
@@ -148,7 +168,7 @@ void timer1Init(En_timer1Mode_t en_mode,En_timer1OC_t en_OC,En_timer1perscaler_t
 					TCCR1 = 0 ;		
 					global_prescale1 = en_prescal ;
 					TCCR1 = en_mode | en_OC ;
-					timer2Set(u16_initialValue) ;
+					timer1Set(u16_initialValue) ;
 					OCR1A = u16_outputCompareA ;
 					OCR1B = u16_outputCompareB ;
 					TIMSK |= en_interruptMask ; 
@@ -179,7 +199,6 @@ void timer1Stop(void){
 	TCCR1 = T1_NO_CLOCK ;
 }
 
-
 void timer1DelayMs(uint16_t u16_delay_in_ms){
 	
 		timer1Init(T1_COMP_MODE_OCR1A_TOP, T1_OC1A_CLEAR ,T1_PRESCALER_64, 0 , 250 , 0, 0 , T2_POLLING) ;
@@ -192,15 +211,13 @@ void timer1DelayMs(uint16_t u16_delay_in_ms){
 			if(TIFR&0x10)
 			{
 				u16_delay_in_ms -- ;
-				TCNT2 = 0 ;
+				TCNT1 = 0 ;
 				TIFR |=0x10 ;
 			}	
 		}
-		timer0Stop();
+		timer1Stop();
 	
 }
-
-
 
 void timer2Init(En_timer2Mode_t en_mode,En_timer2OC_t en_OC,En_timer2perscaler_t en_prescal, 
 				uint8_t u8_initialValue, uint8_t u8_outputCompare, uint8_t u8_assynchronous, 
@@ -229,7 +246,6 @@ uint8_t timer2Read(void){
 	return TCNT2 ;
 	
 }
-
 
 void timer2Start(void){
 	
@@ -260,6 +276,6 @@ void timer2DelayMs(uint16_t u16_delay_in_ms){
 		}
 		
 	}
-	timer0Stop();
+	timer2Stop();
 }
 
